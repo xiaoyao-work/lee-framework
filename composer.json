@@ -1,0 +1,46 @@
+{
+    "name": "lee/lee-framework",
+    "description": "The PHP Framework.",
+    "keywords": ["PHP framework", "lee framework"],
+    "license": "MIT",
+    "type": "project",
+    "homepage": "http://hhailuo.com",
+    "support": {
+        "issues": "https://github.com/xiaoyao-work/lee-framework/issues",
+        "source": "https://github.com/xiaoyao-work/lee-framework"
+    },
+    "authors": [
+        {
+            "name": "Lee / 逍遥·李志亮",
+            "email": "xiaoyao.working@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "lee/blade": "1.*",
+        "illuminate/database": "5.4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lee\\": "src/"
+        },
+        "files": [
+            "src/helpers.php",
+            "src/plugin.php"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }, {
+            "type": "vcs",
+            "url": "git@github.com:xiaoyao-work/lee-blade.git"
+        }
+    ],
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+
+}
