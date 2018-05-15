@@ -187,7 +187,7 @@ class Response {
     public function send() {
         //Fetch status, header, and body
         list($status, $headers, $body) = $this->finalize();
-
+		$this->setBody('');
         //Send headers
         if (headers_sent() === false) {
             //Send status

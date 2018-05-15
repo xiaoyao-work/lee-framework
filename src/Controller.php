@@ -177,6 +177,7 @@ abstract class Controller {
 		default:
 			// 用于扩展其他返回格式数据
 			$this->app->applyHook('lee.ajaxReturn', $this, $data);
+			return;
 		}
 	}
 
