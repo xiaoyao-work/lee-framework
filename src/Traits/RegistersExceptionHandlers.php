@@ -55,7 +55,7 @@ trait RegistersExceptionHandlers {
 			break;
 			case E_DEPRECATED:
 				if (rand(1,100) == 10) {
-					$this->log()->error("[$level] $message " . $file . " 第 $line 行.", $this->storagePath('log') . '/' . date("Y-m-d") . ".log");
+					$this->log()->error("[$level] $message " . $file . " 第 $line 行.", date("Y-m-d"));
 				}
 				return ;
 				break;
@@ -65,7 +65,7 @@ trait RegistersExceptionHandlers {
 						throw new ErrorException($message, 0, $level, $file, $line);
 					}
 				}
-				$this->log()->error("[$level] $message " . $file . " 第 $line 行.", $this->storagePath('log') . '/' . date("Y-m-d") . ".log");
+				$this->log()->error("[$level] $message " . $file . " 第 $line 行.", date("Y-m-d"));
 			break;
 		}
 	}
@@ -115,7 +115,7 @@ trait RegistersExceptionHandlers {
 		$log_string .= "\n File: " . $e->getFile();
 		$log_string .= "\n Line: " . $e->getLine();
 		$log_string .= $e->getTraceAsString();
-		$this->log()->error($log_string, $this->storagePath('log') . '/' . date("Y-m-d") . ".log");
+		$this->log()->error($log_string, date("Y-m-d"));
 		$this->applyHook('lee.after');
 	}
 
