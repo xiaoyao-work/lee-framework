@@ -116,6 +116,6 @@ class Log {
 	 */
 	protected function write($message, $level = self::INFO, $destination = '') {
 		$message = "[" . date("Y-m-d H:i:s") . "] " . $_SERVER['REMOTE_ADDR'] . ' ' . $_SERVER['REQUEST_URI'] . "\r\n" . (is_string($message) ? $message : json_encode($message, JSON_UNESCAPED_UNICODE));
-		$this->storage->write($message, $level, $destination);
+		return $this->storage->write($message, $level, $destination);
 	}
 }
