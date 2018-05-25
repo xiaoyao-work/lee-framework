@@ -14,15 +14,15 @@ class RedisHandler {
     private $defaultTimeout   = 300;
 
     private function __construct($config) {
-        if ($config == 'REDIS_DEFAULT') {
-            $conf['server'] = config('REDIS_HOST');
-            $conf['port']   = config('REDIS_PORT');
-        } else {
-            $conf = config($config);
+        $redis_connections = config('database.redis_connections');
+        if ($config == 'default_redis') {
+            $config = config('database.default_redis');
         }
+
+        $conf = $redis_connections[$config];
         $this->redis = new \Redis();
         try {
-            $this->redis->connect($conf['server'], $conf['port']);
+            $this->redis->connect($conf['host'], $conf['port']);
             $this->redis->ping();
         } catch (\Exception $e) {
             throw new \Exception('RedisHandle_redis_connect 3 ' . $e->getMessage(), 1);
@@ -33,13 +33,13 @@ class RedisHandler {
     /**
      * 取得handle对象
      * $config = array(
-     *  'server' => '127.0.0.1' 服务器
+     *  'host' => '127.0.0.1' 服务器
      *  'port'   => '6379' 端口号
      * )
      * @param string $config
      * @return RedisHandle
      */
-    public static function getInstance($config = 'REDIS_DEFAULT') {
+    public static function getInstance($config = 'default_redis') {
         if (!isset(self::$_instance[$config]) || !(self::$_instance[$config] instanceof self)) {
             self::$_instance[$config] = new self($config);
         }

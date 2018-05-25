@@ -46,4 +46,13 @@ return [
             'engine' => null,
         ],
     ],
+
+    'default_redis' => 'redis',
+
+    'redis_connections' => [
+        'redis' => [
+            'host' => '127.0.0.1',
+            'port' => '6379',
+        ]
+    ],
 ];
