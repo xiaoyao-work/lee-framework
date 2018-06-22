@@ -284,7 +284,7 @@ class Request {
      * @return bool
      */
     public function isFormData() {
-        $method = isset($this->env['hhailuo.method_override.original_method']) ? $this->env['hhailuo.method_override.original_method'] : $this->getMethod();
+        $method = isset($this->env['lee.method_override.original_method']) ? $this->env['lee.method_override.original_method'] : $this->getMethod();
 
         return ($method === self::METHOD_POST && is_null($this->getContentType())) || in_array($this->getMediaType(), self::$formDataMediaTypes);
     }
@@ -416,7 +416,7 @@ class Request {
      * @return string
      */
     public function getScheme() {
-        return $this->env['hhailuo.url_scheme'];
+        return $this->env['lee.url_scheme'];
     }
 
     /**

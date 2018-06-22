@@ -61,7 +61,7 @@ class MethodOverride extends \Lee\Middleware {
 			$req    = new \Lee\Http\Request($env);
 			$method = $req->post($this->settings['key']);
 			if ($method) {
-				$env['Lee.method_override.original_method'] = $env['REQUEST_METHOD'];
+				$env['lee.method_override.original_method'] = $env['REQUEST_METHOD'];
 				$env['REQUEST_METHOD']                      = strtoupper($method);
 			}
 		}

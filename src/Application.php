@@ -302,7 +302,7 @@ class Application {
 
 	/**
 	 * Get application log
-	 * @return \Lee\Log
+	 * @return \Lee\Log\Log
 	 */
 	public function log() {
 		return $this->log;
