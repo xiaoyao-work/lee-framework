@@ -20,13 +20,14 @@ namespace Lee\Log;
  */
 class Log {
 	// 日志级别 从上到下，由低到高
-	const FAULT  = 'fault'; // 严重错误: 导致系统崩溃无法使用
-	const ALERT  = 'alert'; // 警戒性错误: 必须被立即修改的错误
-	const ERR    = 'error'; // 一般错误: 一般性错误
-	const WARN   = 'warn'; // 警告性错误: 需要发出警告的错误
-	const NOTICE = 'notic'; // 通知: 程序可以运行但是还不够完美的错误
-	const INFO   = 'info'; // 信息: 程序输出信息
-	const DEBUG  = 'debug'; // 调试: 调试信息
+	const FAULT  	= 'FAULT'; // 严重错误: 导致系统崩溃无法使用
+    const ALERT     = 'ALERT';  // 警戒性错误: 必须被立即修改的错误
+    const ERR       = 'ERR';  // 一般错误: 一般性错误
+    const WARN      = 'WARN';  // 警告性错误: 需要发出警告的错误
+    const NOTICE    = 'NOTIC';  // 通知: 程序可以运行但是还不够完美的错误
+    const INFO      = 'INFO';  // 信息: 程序输出信息
+    const DEBUG     = 'DEBUG';  // 调试: 调试信息
+    const SQL       = 'SQL';  // SQL：SQL语句 注意只在调试模式开启时有效
 
 	// 日志信息
 	protected $log     = [];
@@ -115,7 +116,7 @@ class Log {
 	 * @return void
 	 */
 	protected function write($message, $level = self::INFO, $destination = '') {
-		$message = "[" . date("Y-m-d H:i:s") . "] " . $_SERVER['REMOTE_ADDR'] . ' ' . $_SERVER['REQUEST_URI'] . "\r\n" . (is_string($message) ? $message : json_encode($message, JSON_UNESCAPED_UNICODE));
+		$message = "[" . date("Y-m-d H:i:s") . "] " . $_SERVER['REMOTE_ADDR'] . ' ' . $_SERVER['REQUEST_URI'] . "\r\n" . $level . ' ' . (is_string($message) ? $message : json_encode($message, JSON_UNESCAPED_UNICODE));
 		return $this->storage->write($message, $level, $destination);
 	}
 }
