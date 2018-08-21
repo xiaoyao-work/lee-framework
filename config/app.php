@@ -41,4 +41,5 @@ return [
 	'default_ajax_return'   => 'json', // 默认 ajax 数据返回格式
 	'default_jsonp_handler' => 'lee_callback', // 默认jsonp格式返回的处理方法
 	'var_jsonp_handler'		=> 'callback_method',
+	'url'									=> env('APP_URL', 'http://localhost'),
 ];
