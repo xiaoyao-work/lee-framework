@@ -106,10 +106,10 @@ trait RegistersExceptionHandlers {
 			} else {
 				$content = $this->callErrorHandler($e);
 			}
+			$this->response()->status(500);
+			$this->response()->body($content);
+			$this->response()->send();
 		}
-		$this->response()->status(500);
-		$this->response()->body($content);
-		$this->response()->send();
 		$log_string = "Code: " . $e->getCode();
 		$log_string .= "\n Message: " . $e->getMessage();
 		$log_string .= "\n File: " . $e->getFile();

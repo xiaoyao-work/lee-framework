@@ -52,7 +52,7 @@ class Environment implements \ArrayAccess, \IteratorAggregate {
      */
     public static function getInstance($refresh = false) {
         if (is_null(self::$environment) || $refresh) {
-            self::$environment = new self();
+            self::$environment = app()->runningInConsole() ?  self::mock() : new self();
         }
 
         return self::$environment;
