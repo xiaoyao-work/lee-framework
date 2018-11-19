@@ -118,13 +118,31 @@ if (!function_exists('is_ajax')) {
 if (!function_exists('cookie')) {
 	function cookie($key, $value = null, $options = []) {
 		if (func_num_args() == 1) {
-			return app()->cookie()->get($key);
+			return \Cookie::get($key);
 		} else {
 			if ($value === null) {
-				return app()->cookie()->remove($key, $options);
+				return \Cookie::remove($key, $options);
 			}
 			$options['value'] = $value;
-			return app()->cookie()->set($key, $options);
+			return \Cookie::set($key, $options);
+		}
+	}
+}
+
+if (!function_exists('session')) {
+	function session($key, $value = null) {
+		if (func_num_args() == 1) {
+			if (empty($key)) {
+				return \Session::clear();
+			} else {
+				return \Session::get($key);
+			}
+		} else {
+			if ($value === null) {
+				return \Session::remove($key);
+			}
+			$options['value'] = $value;
+			return \Session::set($key, $options);
 		}
 	}
 }

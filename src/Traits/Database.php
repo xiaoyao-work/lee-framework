@@ -7,7 +7,7 @@
  */
 namespace Lee\Traits;
 
-use DB;
+use Illuminate\Database\Capsule\Manager as DB;
 
 trait Database {
     public function bootstrapDatabase() {
@@ -23,5 +23,6 @@ trait Database {
         }
         $db->setAsGlobal();
         $db->bootEloquent();
+        $this->container['db'] = $db;
     }
 }

@@ -24,17 +24,19 @@
 /** @var Hook[] $lee_filter */
 global $lee_filter, $lee_actions, $lee_current_filter;
 
-if ( $lee_filter ) {
-    $lee_filter = \Lee\Hook::build_preinitialized_hooks( $lee_filter );
+if ($lee_filter) {
+    $lee_filter = \Lee\Hook::build_preinitialized_hooks($lee_filter);
 } else {
-    $lee_filter = array();
+    $lee_filter = [];
 }
 
-if ( ! isset( $lee_actions ) )
-    $lee_actions = array();
+if (!isset($lee_actions)) {
+    $lee_actions = [];
+}
 
-if ( ! isset( $lee_current_filter ) )
-    $lee_current_filter = array();
+if (!isset($lee_current_filter)) {
+    $lee_current_filter = [];
+}
 
 /**
  * Hook a function or method to a specific filter action.
@@ -100,12 +102,12 @@ if ( ! isset( $lee_current_filter ) )
  * @param int      $accepted_args   Optional. The number of arguments the function accepts. Default 1.
  * @return true
  */
-function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 ) {
+function add_filter($tag, $function_to_add, $priority = 10, $accepted_args = 1) {
     global $lee_filter;
-    if ( ! isset( $lee_filter[ $tag ] ) ) {
-        $lee_filter[ $tag ] = new \Lee\Hook();
+    if (!isset($lee_filter[$tag])) {
+        $lee_filter[$tag] = new \Lee\Hook();
     }
-    $lee_filter[ $tag ]->add_filter( $tag, $function_to_add, $priority, $accepted_args );
+    $lee_filter[$tag]->add_filter($tag, $function_to_add, $priority, $accepted_args);
     return true;
 }
 
@@ -128,11 +130,11 @@ function add_filter( $tag, $function_to_add, $priority = 10, $accepted_args = 1 
 function has_filter($tag, $function_to_check = false) {
     global $lee_filter;
 
-    if ( ! isset( $lee_filter[ $tag ] ) ) {
+    if (!isset($lee_filter[$tag])) {
         return false;
     }
 
-    return $lee_filter[ $tag ]->has_filter( $tag, $function_to_check );
+    return $lee_filter[$tag]->has_filter($tag, $function_to_check);
 }
 
 /**
@@ -170,36 +172,40 @@ function has_filter($tag, $function_to_check = false) {
  * @param mixed  $var,... Additional variables passed to the functions hooked to `$tag`.
  * @return mixed The filtered value after all hooked functions are applied to it.
  */
-function apply_filters( $tag, $value ) {
+function apply_filters($tag, $value) {
     global $lee_filter, $lee_current_filter;
 
-    $args = array();
+    $args = [];
 
     // Do 'all' actions first.
-    if ( isset($lee_filter['all']) ) {
+    if (isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
-        $args = func_get_args();
+        $args                 = func_get_args();
         _wp_call_all_hook($args);
     }
 
-    if ( !isset($lee_filter[$tag]) ) {
-        if ( isset($lee_filter['all']) )
+    if (!isset($lee_filter[$tag])) {
+        if (isset($lee_filter['all'])) {
             array_pop($lee_current_filter);
+        }
+
         return $value;
     }
 
-    if ( !isset($lee_filter['all']) )
+    if (!isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
+    }
 
-    if ( empty($args) )
+    if (empty($args)) {
         $args = func_get_args();
+    }
 
     // don't pass the tag name to \Lee\Hook
-    array_shift( $args );
+    array_shift($args);
 
-    $filtered = $lee_filter[ $tag ]->apply_filters( $value, $args );
+    $filtered = $lee_filter[$tag]->apply_filters($value, $args);
 
-    array_pop( $lee_current_filter );
+    array_pop($lee_current_filter);
 
     return $filtered;
 }
@@ -223,24 +229,27 @@ function apply_filters_ref_array($tag, $args) {
     global $lee_filter, $lee_current_filter;
 
     // Do 'all' actions first
-    if ( isset($lee_filter['all']) ) {
+    if (isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
-        $all_args = func_get_args();
+        $all_args             = func_get_args();
         _wp_call_all_hook($all_args);
     }
 
-    if ( !isset($lee_filter[$tag]) ) {
-        if ( isset($lee_filter['all']) )
+    if (!isset($lee_filter[$tag])) {
+        if (isset($lee_filter['all'])) {
             array_pop($lee_current_filter);
+        }
+
         return $args[0];
     }
 
-    if ( !isset($lee_filter['all']) )
+    if (!isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
+    }
 
-    $filtered = $lee_filter[ $tag ]->apply_filters( $args[0], $args );
+    $filtered = $lee_filter[$tag]->apply_filters($args[0], $args);
 
-    array_pop( $lee_current_filter );
+    array_pop($lee_current_filter);
 
     return $filtered;
 }
@@ -265,14 +274,14 @@ function apply_filters_ref_array($tag, $args) {
  * @param int      $priority           Optional. The priority of the function. Default 10.
  * @return bool    Whether the function existed before it was removed.
  */
-function remove_filter( $tag, $function_to_remove, $priority = 10 ) {
+function remove_filter($tag, $function_to_remove, $priority = 10) {
     global $lee_filter;
 
     $r = false;
-    if ( isset( $lee_filter[ $tag ] ) ) {
-        $r = $lee_filter[ $tag ]->remove_filter( $tag, $function_to_remove, $priority );
-        if ( ! $lee_filter[ $tag ]->callbacks ) {
-            unset( $lee_filter[ $tag ] );
+    if (isset($lee_filter[$tag])) {
+        $r = $lee_filter[$tag]->remove_filter($tag, $function_to_remove, $priority);
+        if (!$lee_filter[$tag]->callbacks) {
+            unset($lee_filter[$tag]);
         }
     }
 
@@ -290,13 +299,13 @@ function remove_filter( $tag, $function_to_remove, $priority = 10 ) {
  * @param int|bool $priority Optional. The priority number to remove. Default false.
  * @return true True when finished.
  */
-function remove_all_filters( $tag, $priority = false ) {
+function remove_all_filters($tag, $priority = false) {
     global $lee_filter;
 
-    if ( isset( $lee_filter[ $tag ]) ) {
-        $lee_filter[ $tag ]->remove_all_filters( $priority );
-        if ( ! $lee_filter[ $tag ]->has_filters() ) {
-            unset( $lee_filter[ $tag ] );
+    if (isset($lee_filter[$tag])) {
+        $lee_filter[$tag]->remove_all_filters($priority);
+        if (!$lee_filter[$tag]->has_filters()) {
+            unset($lee_filter[$tag]);
         }
     }
 
@@ -314,7 +323,7 @@ function remove_all_filters( $tag, $priority = false ) {
  */
 function current_filter() {
     global $lee_current_filter;
-    return end( $lee_current_filter );
+    return end($lee_current_filter);
 }
 
 /**
@@ -349,14 +358,14 @@ function current_action() {
  *                            checks if any filter is currently being run.
  * @return bool Whether the filter is currently in the stack.
  */
-function doing_filter( $filter = null ) {
+function doing_filter($filter = null) {
     global $lee_current_filter;
 
-    if ( null === $filter ) {
-        return ! empty( $lee_current_filter );
+    if (null === $filter) {
+        return !empty($lee_current_filter);
     }
 
-    return in_array( $filter, $lee_current_filter );
+    return in_array($filter, $lee_current_filter);
 }
 
 /**
@@ -368,8 +377,8 @@ function doing_filter( $filter = null ) {
  *                            if any action is currently being run.
  * @return bool Whether the action is currently in the stack.
  */
-function doing_action( $action = null ) {
-    return doing_filter( $action );
+function doing_action($action = null) {
+    return doing_filter($action);
 }
 
 /**
@@ -418,36 +427,44 @@ function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) 
 function do_action($tag, $arg = '') {
     global $lee_filter, $lee_actions, $lee_current_filter;
 
-    if ( ! isset($lee_actions[$tag]) )
+    if (!isset($lee_actions[$tag])) {
         $lee_actions[$tag] = 1;
-    else
+    } else {
         ++$lee_actions[$tag];
+    }
 
     // Do 'all' actions first
-    if ( isset($lee_filter['all']) ) {
+    if (isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
-        $all_args = func_get_args();
+        $all_args             = func_get_args();
         _wp_call_all_hook($all_args);
     }
 
-    if ( !isset($lee_filter[$tag]) ) {
-        if ( isset($lee_filter['all']) )
+    if (!isset($lee_filter[$tag])) {
+        if (isset($lee_filter['all'])) {
             array_pop($lee_current_filter);
+        }
+
         return;
     }
 
-    if ( !isset($lee_filter['all']) )
+    if (!isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
+    }
 
-    $args = array();
-    if ( is_array($arg) && 1 == count($arg) && isset($arg[0]) && is_object($arg[0]) ) // array(&$this)
-        $args[] =& $arg[0];
-    else
+    $args = [];
+    if (is_array($arg) && 1 == count($arg) && isset($arg[0]) && is_object($arg[0])) // array(&$this)
+    {
+        $args[] = &$arg[0];
+    } else {
         $args[] = $arg;
-    for ( $a = 2, $num = func_num_args(); $a < $num; $a++ )
-        $args[] = func_get_arg($a);
+    }
 
-    $lee_filter[ $tag ]->do_action( $args );
+    for ($a = 2, $num = func_num_args(); $a < $num; $a++) {
+        $args[] = func_get_arg($a);
+    }
+
+    $lee_filter[$tag]->do_action($args);
 
     array_pop($lee_current_filter);
 }
@@ -465,8 +482,9 @@ function do_action($tag, $arg = '') {
 function did_action($tag) {
     global $lee_actions;
 
-    if ( ! isset( $lee_actions[ $tag ] ) )
+    if (!isset($lee_actions[$tag])) {
         return 0;
+    }
 
     return $lee_actions[$tag];
 }
@@ -488,28 +506,32 @@ function did_action($tag) {
 function do_action_ref_array($tag, $args) {
     global $lee_filter, $lee_actions, $lee_current_filter;
 
-    if ( ! isset($lee_actions[$tag]) )
+    if (!isset($lee_actions[$tag])) {
         $lee_actions[$tag] = 1;
-    else
+    } else {
         ++$lee_actions[$tag];
+    }
 
     // Do 'all' actions first
-    if ( isset($lee_filter['all']) ) {
+    if (isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
-        $all_args = func_get_args();
+        $all_args             = func_get_args();
         _wp_call_all_hook($all_args);
     }
 
-    if ( !isset($lee_filter[$tag]) ) {
-        if ( isset($lee_filter['all']) )
+    if (!isset($lee_filter[$tag])) {
+        if (isset($lee_filter['all'])) {
             array_pop($lee_current_filter);
+        }
+
         return;
     }
 
-    if ( !isset($lee_filter['all']) )
+    if (!isset($lee_filter['all'])) {
         $lee_current_filter[] = $tag;
+    }
 
-    $lee_filter[ $tag ]->do_action( $args );
+    $lee_filter[$tag]->do_action($args);
 
     array_pop($lee_current_filter);
 }
@@ -548,8 +570,8 @@ function has_action($tag, $function_to_check = false) {
  * @param int      $priority           Optional. The priority of the function. Default 10.
  * @return bool Whether the function is removed.
  */
-function remove_action( $tag, $function_to_remove, $priority = 10 ) {
-    return remove_filter( $tag, $function_to_remove, $priority );
+function remove_action($tag, $function_to_remove, $priority = 10) {
+    return remove_filter($tag, $function_to_remove, $priority);
 }
 
 /**
@@ -581,23 +603,23 @@ function remove_all_actions($tag, $priority = false) {
  * @param string $file The filename of plugin.
  * @return string The name of a plugin.
  */
-function plugin_basename( $file ) {
+function plugin_basename($file) {
     global $wp_plugin_paths;
 
     // $wp_plugin_paths contains normalized paths.
-    $file = wp_normalize_path( $file );
+    $file = wp_normalize_path($file);
 
-    arsort( $wp_plugin_paths );
-    foreach ( $wp_plugin_paths as $dir => $realdir ) {
-        if ( strpos( $file, $realdir ) === 0 ) {
-            $file = $dir . substr( $file, strlen( $realdir ) );
+    arsort($wp_plugin_paths);
+    foreach ($wp_plugin_paths as $dir => $realdir) {
+        if (strpos($file, $realdir) === 0) {
+            $file = $dir . substr($file, strlen($realdir));
         }
     }
 
-    $plugin_dir = wp_normalize_path( WP_PLUGIN_DIR );
-    $mu_plugin_dir = wp_normalize_path( WPMU_PLUGIN_DIR );
+    $plugin_dir    = wp_normalize_path(WP_PLUGIN_DIR);
+    $mu_plugin_dir = wp_normalize_path(WPMU_PLUGIN_DIR);
 
-    $file = preg_replace('#^' . preg_quote($plugin_dir, '#') . '/|^' . preg_quote($mu_plugin_dir, '#') . '/#','',$file); // get relative path from plugins dir
+    $file = preg_replace('#^' . preg_quote($plugin_dir, '#') . '/|^' . preg_quote($mu_plugin_dir, '#') . '/#', '', $file); // get relative path from plugins dir
     $file = trim($file, '/');
     return $file;
 }
@@ -619,25 +641,25 @@ function plugin_basename( $file ) {
  * @param string $file Known path to the file.
  * @return bool Whether the path was able to be registered.
  */
-function wp_register_plugin_realpath( $file ) {
+function wp_register_plugin_realpath($file) {
     global $wp_plugin_paths;
 
     // Normalize, but store as static to avoid recalculation of a constant value
     static $wp_plugin_path = null, $wpmu_plugin_path = null;
-    if ( ! isset( $wp_plugin_path ) ) {
-        $wp_plugin_path   = wp_normalize_path( WP_PLUGIN_DIR   );
-        $wpmu_plugin_path = wp_normalize_path( WPMU_PLUGIN_DIR );
+    if (!isset($wp_plugin_path)) {
+        $wp_plugin_path   = wp_normalize_path(WP_PLUGIN_DIR);
+        $wpmu_plugin_path = wp_normalize_path(WPMU_PLUGIN_DIR);
     }
 
-    $plugin_path = wp_normalize_path( dirname( $file ) );
-    $plugin_realpath = wp_normalize_path( dirname( realpath( $file ) ) );
+    $plugin_path     = wp_normalize_path(dirname($file));
+    $plugin_realpath = wp_normalize_path(dirname(realpath($file)));
 
-    if ( $plugin_path === $wp_plugin_path || $plugin_path === $wpmu_plugin_path ) {
+    if ($plugin_path === $wp_plugin_path || $plugin_path === $wpmu_plugin_path) {
         return false;
     }
 
-    if ( $plugin_path !== $plugin_realpath ) {
-        $wp_plugin_paths[ $plugin_path ] = $plugin_realpath;
+    if ($plugin_path !== $plugin_realpath) {
+        $wp_plugin_paths[$plugin_path] = $plugin_realpath;
     }
 
     return true;
@@ -651,8 +673,8 @@ function wp_register_plugin_realpath( $file ) {
  * @param string $file The filename of the plugin (__FILE__).
  * @return string the filesystem path of the directory that contains the plugin.
  */
-function plugin_dir_path( $file ) {
-    return trailingslashit( dirname( $file ) );
+function plugin_dir_path($file) {
+    return trailingslashit(dirname($file));
 }
 
 /**
@@ -663,8 +685,8 @@ function plugin_dir_path( $file ) {
  * @param string $file The filename of the plugin (__FILE__).
  * @return string the URL path of the directory that contains the plugin.
  */
-function plugin_dir_url( $file ) {
-    return trailingslashit( plugins_url( '', $file ) );
+function plugin_dir_url($file) {
+    return trailingslashit(plugins_url('', $file));
 }
 
 /**
@@ -739,9 +761,9 @@ function register_deactivation_hook($file, $function) {
  * @param callable $callback The callback to run when the hook is called. Must be
  *                           a static method or function.
  */
-function register_uninstall_hook( $file, $callback ) {
-    if ( is_array( $callback ) && is_object( $callback[0] ) ) {
-        _doing_it_wrong( __FUNCTION__, __( 'Only a static class method or function can be used in an uninstall hook.' ), '3.1.0' );
+function register_uninstall_hook($file, $callback) {
+    if (is_array($callback) && is_object($callback[0])) {
+        _doing_it_wrong(__FUNCTION__, __('Only a static class method or function can be used in an uninstall hook.'), '3.1.0');
         return;
     }
 
@@ -750,7 +772,7 @@ function register_uninstall_hook( $file, $callback ) {
      * cases. Emphasis should be put on using the 'uninstall.php' way of
      * uninstalling the plugin.
      */
-    $uninstallable_plugins = (array) get_option('uninstall_plugins');
+    $uninstallable_plugins                         = (array) get_option('uninstall_plugins');
     $uninstallable_plugins[plugin_basename($file)] = $callback;
 
     update_option('uninstall_plugins', $uninstallable_plugins);
@@ -777,7 +799,7 @@ function register_uninstall_hook( $file, $callback ) {
 function _wp_call_all_hook($args) {
     global $lee_filter;
 
-    $lee_filter['all']->do_all_hook( $args );
+    $lee_filter['all']->do_all_hook($args);
 }
 
 /**
@@ -818,26 +840,29 @@ function _wp_filter_build_unique_id($tag, $function, $priority) {
     global $lee_filter;
     static $filter_id_count = 0;
 
-    if ( is_string($function) )
+    if (is_string($function)) {
         return $function;
+    }
 
-    if ( is_object($function) ) {
+    if (is_object($function)) {
         // Closures are currently implemented as objects
-        $function = array( $function, '' );
+        $function = [$function, ''];
     } else {
         $function = (array) $function;
     }
 
-    if (is_object($function[0]) ) {
+    if (is_object($function[0])) {
         // Object Class Calling
-        if ( function_exists('spl_object_hash') ) {
+        if (function_exists('spl_object_hash')) {
             return spl_object_hash($function[0]) . $function[1];
         } else {
-            $obj_idx = get_class($function[0]).$function[1];
-            if ( !isset($function[0]->wp_filter_id) ) {
-                if ( false === $priority )
+            $obj_idx = get_class($function[0]) . $function[1];
+            if (!isset($function[0]->wp_filter_id)) {
+                if (false === $priority) {
                     return false;
-                $obj_idx .= isset($lee_filter[$tag][$priority]) ? count((array)$lee_filter[$tag][$priority]) : $filter_id_count;
+                }
+
+                $obj_idx .= isset($lee_filter[$tag][$priority]) ? count((array) $lee_filter[$tag][$priority]) : $filter_id_count;
                 $function[0]->wp_filter_id = $filter_id_count;
                 ++$filter_id_count;
             } else {
@@ -846,7 +871,7 @@ function _wp_filter_build_unique_id($tag, $function, $priority) {
 
             return $obj_idx;
         }
-    } elseif ( is_string( $function[0] ) ) {
+    } elseif (is_string($function[0])) {
         // Static Calling
         return $function[0] . '::' . $function[1];
     }
