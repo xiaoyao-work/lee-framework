@@ -76,65 +76,6 @@ class View {
     }
 
 	/**
-	 * Does view data have value with key?
-	 * @param  string  $key
-	 * @return boolean
-	 */
-	public function has($key) {
-		return $this->data->has($key);
-	}
-
-	/**
-	 * Return view data value with key
-	 * @param  string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return $this->data->get($key);
-	}
-
-	/**
-	 * Set view data value with key
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function set($key, $value) {
-		$this->data->set($key, $value);
-	}
-
-	/**
-	 * Set view data value as Closure with key
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function keep($key, \Closure $value) {
-		$this->data->keep($key, $value);
-	}
-
-	/**
-	 * Return view data
-	 * @return array
-	 */
-	public function all() {
-		return $this->data->all();
-	}
-
-	/**
-	 * Replace view data
-	 * @param  array  $data
-	 */
-	public function replace(array $data) {
-		$this->data->replace($data);
-	}
-
-	/**
-	 * Clear view data
-	 */
-	public function clear() {
-		$this->data->clear();
-	}
-
-	/**
 	 * Display template
 	 *
 	 * This method echoes the rendered template to the current output buffer
@@ -170,5 +111,73 @@ class View {
 	protected function render($template, $data = null) {
 		return $this->factory->make($template, array_merge($this->data->all(), (array)$data))->render();
 	}
+
+    /**
+     * Get the view factory instance.
+     *
+     * @return \Lee\Blade\Factory
+     */
+    public function getFactory() {
+        return $this->factory;
+    }
+
+    /**
+     * Does view data have value with key?
+     * @param  string  $key
+     * @return boolean
+     */
+    public function has($key) {
+        return $this->data->has($key);
+    }
+
+    /**
+     * Return view data value with key
+     * @param  string $key
+     * @return mixed
+     */
+    public function get($key) {
+        return $this->data->get($key);
+    }
+
+    /**
+     * Set view data value with key
+     * @param string $key
+     * @param mixed $value
+     */
+    public function set($key, $value) {
+        $this->data->set($key, $value);
+    }
+
+    /**
+     * Set view data value as Closure with key
+     * @param string $key
+     * @param mixed $value
+     */
+    public function keep($key, \Closure $value) {
+        $this->data->keep($key, $value);
+    }
+
+    /**
+     * Return view data
+     * @return array
+     */
+    public function all() {
+        return $this->data->all();
+    }
+
+    /**
+     * Replace view data
+     * @param  array  $data
+     */
+    public function replace(array $data) {
+        $this->data->replace($data);
+    }
+
+    /**
+     * Clear view data
+     */
+    public function clear() {
+        $this->data->clear();
+    }
 
 }

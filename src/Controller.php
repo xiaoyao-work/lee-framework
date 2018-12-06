@@ -13,6 +13,7 @@
  */
 namespace Lee;
 
+use InvalidArgumentException;
 /**
  * Lee
  * @package  Lee
@@ -67,8 +68,7 @@ abstract class Controller {
      * @return void
      */
     protected function display($template = '', $data = null) {
-        $template = empty($template) ? $this->getDefaultTemplate() : $template;
-        $this->view->display($template, $data);
+        $this->view->display($this->getTemplate($template), $data);
     }
 
     /**
@@ -86,10 +86,18 @@ abstract class Controller {
         return $this->view->fetch($template, $data);
     }
 
-    protected function getDefaultTemplate() {
-        // $namespace     = $current_route->getNamespace();
-        $current_route = $this->app->router()->getCurrentRoute();
-        $template      = empty($this->viewPathPrefix) ? strtolower($current_route->getController()) . '.' . $current_route->getAction() : trim($this->viewPathPrefix, '/') . '.' . strtolower($current_route->getController()) . '.' . $current_route->getAction();
+    protected function getTemplate($template) {
+        $current_route = \Router::getCurrentRoute();
+        if (empty($template)) {
+            return trim($this->viewPathPrefix, '/') . '.' . strtolower($current_route->getController()) . '.' . $current_route->getAction();
+        }
+        try {
+            $this->view->getFactory()->getFinder()->find($template);
+        } catch (\InvalidArgumentException $e) {
+            $template_arr = preg_split("/[\/\.]/", $template);
+            $default_template_arr = preg_split("/[\/\.]/", trim($this->viewPathPrefix, '/') . '/' . strtolower($current_route->getController()) . '/' . $current_route->getAction());
+            $template = implode('/', array_reverse(array_replace(array_reverse($default_template_arr), array_reverse($template_arr))));
+        }
         return $template;
     }
 

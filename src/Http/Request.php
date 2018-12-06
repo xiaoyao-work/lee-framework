@@ -2,12 +2,12 @@
 namespace Lee\Http;
 
 /**
- * Hhailuo HTTP Request
+ * Lee HTTP Request
  *
- * This class provides a human-friendly interface to the Hhailuo environment variables;
+ * This class provides a human-friendly interface to the Lee environment variables;
  * environment variables are passed by reference and will be modified directly.
  *
- * @package Hhailuo
+ * @package Lee
  *
  * @author  逍遥·李志亮
  *
@@ -428,7 +428,7 @@ class Request {
     }
 
     /**
-     * LEGACY: Get Root URI (alias for Hhailuo_Http_Request::getScriptName)
+     * LEGACY: Get Root URI (alias for Lee_Http_Request::getScriptName)
      * @return string
      */
     public function getRootUri() {
@@ -452,7 +452,7 @@ class Request {
     }
 
     /**
-     * LEGACY: Get Resource URI (alias for Hhailuo_Http_Request::getPathInfo)
+     * LEGACY: Get Resource URI (alias for Lee_Http_Request::getPathInfo)
      * @return string
      */
     public function getResourceUri() {

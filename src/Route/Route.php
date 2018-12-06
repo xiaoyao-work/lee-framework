@@ -21,12 +21,12 @@ class Route {
 	protected $domain = '';
 
 	/**
-	 * @var string 命名空间
+	 * @var string The route namespace
 	 */
 	protected $namespace = '\\';
 
 	/**
-	 * @var string controller
+	 * @var string The route controller
 	 */
 	protected $controller = '';
 
@@ -34,11 +34,6 @@ class Route {
 	 * @var string action
 	 */
 	protected $action = '';
-
-	/**
-	 * @var string 路由对应的类
-	 */
-	protected $controllerClass = '';
 
 	/**
 	 * @var mixed The route callable
@@ -148,7 +143,7 @@ class Route {
 	}
 
 	/**
-	 * 获取路由域名
+	 * Get route domain
 	 * @return string
 	 */
 	public function getDomain() {
@@ -156,14 +151,15 @@ class Route {
 	}
 
 	/**
-	 * 设置路由域名
+	 * Set route domain
+	 * @param string $domain
 	 */
 	public function setDomain($domain) {
 		$this->domain = $domain;
 	}
 
 	/**
-	 * 获取命名空间
+	 * Get route namespace
 	 * @return string
 	 */
 	public function getNamespace() {
@@ -171,14 +167,15 @@ class Route {
 	}
 
 	/**
-	 * 设置命名空间
+	 * Set route namespace
+	 * @param string $namespace
 	 */
 	public function setNamespace($namespace) {
 		$this->namespace = $namespace;
 	}
 
 	/**
-	 * 获取controller
+	 * Get route controller
 	 * @return string
 	 */
 	public function getController() {
@@ -186,15 +183,19 @@ class Route {
 	}
 
 	/**
-	 * 设置controller
+	 * Set route controller
+	 * @param string $controller
 	 */
 	public function setController($controller) {
 		$controller = explode('/', str_replace('\\', '/', $controller));
-		$this->controller = end($controller);
+		$this->controller = array_pop($controller);
+		if (!empty($controller)) {
+			$this->namespace = rtrim($this->namespace, '\\') . '\\' . implode('\\', $controller);
+		}
 	}
 
 	/**
-	 * 获取Action
+	 * Get route action
 	 * @return string
 	 */
 	public function getAction() {
@@ -202,7 +203,8 @@ class Route {
 	}
 
 	/**
-	 * 设置Action
+	 * Set route action
+	 * @param string $action
 	 */
 	public function setAction($action) {
 		$this->action = $action;
@@ -225,17 +227,15 @@ class Route {
 		$matches = [];
 
 		if (is_string($callable) && preg_match('!^([^@]+)@([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$!', $callable, $matches)) {
-			$class    = $matches[1];
-			$method   = $matches[2];
-			$this->setController($class);
-			$this->setAction($method);
-			$callable = function () use ($class, $method) {
+			$this->setController($matches[1]);
+			$this->setAction($matches[2]);
+			$callable = function () {
 				static $obj = null;
 				if ($obj === null) {
-                    $class = '\\' . trim($this->namespace, '\\') . '\\' . trim($class, '\\');
+                    $class = '\\' . trim($this->namespace, '\\') . '\\' . trim($this->controller, '\\');
                     $obj = new $class;
 				}
-				return call_user_func_array([$obj, $method], func_get_args());
+				return call_user_func_array([$obj, $this->action], func_get_args());
 			};
 		}
 
