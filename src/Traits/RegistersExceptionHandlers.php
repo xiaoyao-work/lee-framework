@@ -116,7 +116,7 @@ trait RegistersExceptionHandlers {
 		$log_string .= "\n Line: " . $e->getLine();
 		$log_string .= $e->getTraceAsString();
 		$this->log()->error($log_string, date("Y-m-d"));
-		$this->applyHook('lee.after');
+		do_action('lee_end');
 	}
 
 	/**

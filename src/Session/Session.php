@@ -61,6 +61,9 @@ class Session extends Set {
 				[ & $hander, "destroy"],
 				[ & $hander, "gc"]);
 		}
+		if ($this->options['auto_start']) {
+			$this->start();
+		}
 	}
 
 	public function start() {

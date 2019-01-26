@@ -33,7 +33,6 @@ use Lee\View;
  */
 class Application implements \ArrayAccess {
     use \Lee\Traits\RegistersExceptionHandlers;
-    use \Lee\Traits\Hook;
     use \Lee\Traits\Header;
     use \Lee\Traits\Flash;
     use \Lee\Traits\Config;
@@ -99,12 +98,12 @@ class Application implements \ArrayAccess {
      * @var array
      */
     protected $hooks = [
-        'lee.before'          => [[]],
-        'lee.before.router'   => [[]],
-        'lee.before.dispatch' => [[]],
-        'lee.after.dispatch'  => [[]],
-        'lee.after.router'    => [[]],
-        'lee.after'           => [[]],
+        'lee_init'          => [[]],
+        'lee_route_init'   => [[]],
+        'lee_route_dispatch_init' => [[]],
+        'lee_route_dispatch_end'  => [[]],
+        'lee_route_end'    => [[]],
+        'lee_end'           => [[]],
     ];
 
     /************************************************************************/
@@ -568,7 +567,7 @@ class Application implements \ArrayAccess {
      * are returned to the HTTP client.
      */
     public function run() {
-        $this->applyHook('lee.before');
+        do_action('lee_init');
         // start session
         if (!$this->runningInConsole()) {
             $this->session()->start();
@@ -577,7 +576,7 @@ class Application implements \ArrayAccess {
         // Invoke middleware and application stack
         $this->middleware[0]->call();
         $this->response()->send();
-        $this->applyHook('lee.after');
+        do_action('lee_end');
     }
 
     /**
@@ -590,14 +589,14 @@ class Application implements \ArrayAccess {
             if (isset($this->environment['lee.flash'])) {
                 $this->view()->set('flash', $this->environment['lee.flash']);
             }
-            $this->applyHook('lee.before.router', $this->router);
+            do_action('lee_route_init');
             $dispatched    = false;
             $matchedRoutes = $this->router->getMatchedRoutes($this->request->getMethod(), $this->request->getResourceUri(), $this->request->getHost());
             foreach ($matchedRoutes as $route) {
                 try {
-                    $this->applyHook('lee.before.dispatch');
+                    do_action('lee_route_dispatch_init', $route);
                     $dispatched = $route->dispatch();
-                    $this->applyHook('lee.after.dispatch');
+                    do_action('lee_route_dispatch_end', $route);
                     if ($dispatched) {
                         break;
                     }
@@ -605,7 +604,7 @@ class Application implements \ArrayAccess {
                     continue;
                 }
             }
-            $this->applyHook('lee.after.router', $this);
+            do_action('lee_route_end', $dispatched);
             if (!$dispatched) {
                 $this->notFound();
             }

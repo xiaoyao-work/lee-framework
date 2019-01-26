@@ -14,6 +14,8 @@
 namespace Lee;
 
 use InvalidArgumentException;
+use \Lee\Exception\Stop as StopException;
+
 /**
  * Lee
  * @package  Lee
@@ -50,10 +52,10 @@ abstract class Controller {
     protected $viewPathPrefix = '';
 
     public function __construct() {
-        $this->app     = app();
-        $this->view    = $this->app->view();
-        $this->router  = $this->app->router();
-        $this->route   = $this->router->getCurrentRoute();
+        $this->app    = app();
+        $this->view   = $this->app->view();
+        $this->router = $this->app->router();
+        $this->route  = $this->router->getCurrentRoute();
     }
 
     /**
@@ -94,9 +96,9 @@ abstract class Controller {
         try {
             $this->view->getFactory()->getFinder()->find($template);
         } catch (\InvalidArgumentException $e) {
-            $template_arr = preg_split("/[\/\.]/", $template);
+            $template_arr         = preg_split("/[\/\.]/", $template);
             $default_template_arr = preg_split("/[\/\.]/", trim($this->viewPathPrefix, '/') . '/' . strtolower($current_route->getController()) . '/' . $current_route->getAction());
-            $template = implode('/', array_reverse(array_replace(array_reverse($default_template_arr), array_reverse($template_arr))));
+            $template             = implode('/', array_reverse(array_replace(array_reverse($default_template_arr), array_reverse($template_arr))));
         }
         return $template;
     }
@@ -172,20 +174,20 @@ abstract class Controller {
         case 'JSON':
             // 返回JSON数据格式到客户端 包含状态信息
             $this->app->response()->header(['Content-Type' => 'application/json', 'charset' => 'utf-8'])->setBody(json_encode($data, $json_option))->send();
-            return;
+            throw new StopException("", 0);
         case 'XML':
             // 返回xml格式数据
             $this->app->response()->header(['Content-Type' => 'text/xml', 'charset' => 'utf-8'])->setBody(xml_encode($data))->send();
-            return;
+            throw new StopException("", 0);
         case 'JSONP':
             $handler = isset($_GET[config('var_jsonp_handler')]) ? $_GET[config('var_jsonp_handler')] : config('default_jsonp_handler');
             // 返回JSON数据格式到客户端 包含状态信息
             $this->app->response()->header(['Content-Type' => 'application/json', 'charset' => 'utf-8'])->setBody($handler . '(' . json_encode($data, $json_option) . ');')->send();
-            return;
+            throw new StopException("", 0);
         default:
             // 用于扩展其他返回格式数据
-            $this->app->applyHook('lee.ajaxReturn', $this, $data);
-            return;
+            do_action('lee.ajaxReturn', $this, $data);
+            throw new StopException("", 0);
         }
     }
 
