@@ -18,7 +18,8 @@
     "require": {
         "php": ">=5.4.0",
         "lee/blade": "1.*",
-        "illuminate/database": "5.4.*"
+        "illuminate/database": "5.4.*",
+        "layershifter/tld-extract": "~1.2.7"
     },
     "autoload": {
         "psr-4": {

@@ -193,3 +193,12 @@ if (!function_exists("load_plugins")) {
         }
     }
 }
+
+if (!function_exists("get_registerdomain")) {
+    function get_registerdomain($host = '') {
+        $host = empty($host) ? $_SERVER['HTTP_HOST'] : $host;
+        $extract = new \LayerShifter\TLDExtract\Extract();
+        $result = $extract->parse($host);
+        return $result->isValidDomain() ? $result->getRegistrableDomain() : $host;
+    }
+}
